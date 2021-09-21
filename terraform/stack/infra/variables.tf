@@ -10,11 +10,13 @@ variable "env" {
 }
 variable "vpc_id" {
   type = string
+  default = "vpc-d53b0ead"
   description = "VPC Id to create resources in"
 }
-variable "lambda_subnet_id" {
-  type = string
-  description = "Subnet id for Lambda function"
+variable "lambda_subnet_ids" {
+  type = list(string)
+  default = [ "subnet-0b76e756","subnet-a03494ea" ]
+  description = "One or more Subnet id for Lambda function"
 }
 variable "lambda_max_memory" {
   type = number

@@ -103,7 +103,7 @@ resource "aws_lambda_function" "lambda_function" {
   tags             = var.tags
   vpc_config {
     security_group_ids = [aws_security_group.lambda_function_sg.id]
-    subnet_ids         = [var.subnet_id]
+    subnet_ids         = var.subnet_ids
   }
 
   dynamic "environment" {

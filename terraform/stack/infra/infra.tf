@@ -75,7 +75,7 @@ module "lambda_getlookupdata" {
   project                        = var.project
   env                            = "${terraform.workspace}"
   vpc_id                         = var.vpc_id
-  subnet_id                      = var.lambda_subnet_id
+  subnet_ids                      = var.lambda_subnet_ids
   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-bizparty-getlookupdata"
   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -92,7 +92,7 @@ module "lambda_getchargetypes" {
   project                        = var.project
   env                            = "${terraform.workspace}"
   vpc_id                         = var.vpc_id
-  subnet_id                      = var.lambda_subnet_id
+  subnet_ids                      = var.lambda_subnet_ids
   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-getchargetypes"
   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -109,7 +109,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-deletehoachargeitem"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -126,7 +126,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-gethoacharge"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -143,7 +143,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-getindividualhoacharge"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -160,7 +160,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-updatehoadues"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -177,7 +177,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-updatehoaentity"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -194,7 +194,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-updatehoaproration"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -211,7 +211,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-createhoacharge"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -228,7 +228,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-createhoachargeitem"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -245,7 +245,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-chargeprocess-updatehoachargeitem"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -262,7 +262,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-createsigningorder"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -279,7 +279,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-getpropertyaddress"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -296,7 +296,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-deletesigningorder"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -313,7 +313,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-getsigningorder"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -329,7 +329,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-signingorderlist"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
@@ -346,7 +346,7 @@ module "lambda_getchargetypes" {
 #   project                        = var.project
 #   env                            = "${terraform.workspace}"
 #   vpc_id                         = var.vpc_id
-#   subnet_id                      = var.lambda_subnet_id
+#   subnet_ids                      = var.lambda_subnet_ids
 #   lambda_function_name           = "${var.project}-${terraform.workspace}-lambda-mfe-notary-updatesigningorder"
 #   #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
 #   lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"

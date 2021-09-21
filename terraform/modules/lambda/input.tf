@@ -12,9 +12,9 @@ variable "vpc_id" {
   type = string
   description = "Vpc id"
 }
-variable "subnet_id" {
-  type = string
-  description = "Subnet id"
+variable "subnet_ids" {
+  type = list(string)
+  description = "One or more Subnet ids"
 }
 variable "lambda_function_name" {
     type = string
