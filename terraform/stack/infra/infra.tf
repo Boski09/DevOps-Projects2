@@ -1,5 +1,6 @@
 data "aws_region" "aws-region" {}
 
+
 locals {
   tags = {
     "Application Service Number" = "APP0005852"
