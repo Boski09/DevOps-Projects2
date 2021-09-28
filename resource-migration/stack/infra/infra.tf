@@ -107,6 +107,22 @@ module "lambda_function_05" {
   lambda_env_variables           = local.lambda_env_vars
   tags                           = local.tags
 }
+module "lambda_function_06" {
+  source                         = "../../modules/lambda"
+  project                        = var.project
+  env                            = "${terraform.workspace}"
+  vpc_id                         = var.vpc_id
+  subnet_ids                      = var.lambda_subnet_ids
+  lambda_function_name           = "${var.project}-${terraform.workspace}-GetBuyerSummary"
+  #The valid format for lambda_handler_name for dotnetcore3.1 is 'ASSEMBLY::TYPE::METHOD'
+  lambda_handler_name            = "LambdaFunction::LambdaFunction.LambdaHandler::handleRequest"
+  lambda_function_runtime        = "dotnetcore3.1"
+  lambda_max_memory              = var.lambda_max_memory
+  lambda_timeout                 = var.lambda_timeout
+  lambda_deployment_package_path = "../../modules/lambda/lambda_function.zip"
+  lambda_env_variables           = local.lambda_env_vars
+  tags                           = local.tags
+}
 
 module "api_gw" {
   source                         = "../../modules/api-gw"
@@ -132,6 +148,8 @@ module "api_gw" {
   lambda_name_04      = module.lambda_function_04.lambda_function_name
   lambda_invoke_arn_05 = module.lambda_function_05.lambda_function_invoke_arn
   lambda_name_05      = module.lambda_function_05.lambda_function_name
+  lambda_invoke_arn_06 = module.lambda_function_06.lambda_function_invoke_arn
+  lambda_name_06      = module.lambda_function_06.lambda_function_name
 
   enable_api_xray = true
 

@@ -3,6 +3,19 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 
 #------------------------------------
+#           API Authorizer
+#------------------------------------
+
+
+# resource "aws_api_gateway_authorizer" "api_auth" {
+#   name                   = "${var.project}-${terraform.workspace}-api"
+#   type                   = "TOKEN"
+#   rest_api_id            = aws_api_gateway_rest_api.api.id
+#   authorizer_uri         = aws_lambda_function.authorizer.invoke_arn
+#   authorizer_credentials = aws_iam_role.invocation_role.arn
+# }
+
+#------------------------------------
 #           API 01
 #------------------------------------
 
@@ -11,34 +24,45 @@ resource "aws_api_gateway_resource" "api_01" {
   path_part   = var.api_01
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#/OPTIONS
 resource "aws_api_gateway_method" "api_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
   resource_id   = aws_api_gateway_resource.api_01.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
 }
-
 resource "aws_api_gateway_integration" "api_01_01" {
   rest_api_id          = aws_api_gateway_rest_api.api.id
   resource_id          = aws_api_gateway_resource.api_01.id
   http_method          = aws_api_gateway_method.api_01_01.http_method
   timeout_milliseconds = 29000
-  type                    = "MOCK" #"AWS_PROXY"
+  type                 = "MOCK" #"AWS_PROXY"
   passthrough_behavior = "WHEN_NO_TEMPLATES"
 }
 resource "aws_api_gateway_method_response" "api_01_01" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.api_01.id
-  http_method = aws_api_gateway_method.api_01_01.http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.api.id
+  resource_id     = aws_api_gateway_resource.api_01.id
+  http_method     = aws_api_gateway_method.api_01_01.http_method
+  status_code     = "200"
   response_models = {"application/json"="Empty"}
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
 }
 resource "aws_api_gateway_integration_response" "api_01_01" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.api_01.id
   http_method = aws_api_gateway_method.api_01_01.http_method
   status_code = aws_api_gateway_method_response.api_01_01.status_code
+  response_parameters = { 
+    "method.response.header.Access-Control-Allow-Origin" = "'integration.response.header.X-Some-Other-Header'"
+    "method.response.header.Access-Control-Allow-Methods" = "'DELETE, GET, HEAD, PATCH, PUT, POST,OPTIONS'",
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  } 
 }
+#/POST
 resource "aws_api_gateway_method" "api_01_02" {
   authorization = "NONE"
   http_method   = "POST"
@@ -46,21 +70,21 @@ resource "aws_api_gateway_method" "api_01_02" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
 }
 resource "aws_api_gateway_integration" "api_01_02" {
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  resource_id          = aws_api_gateway_resource.api_01.id
-  http_method          = aws_api_gateway_method.api_01_02.http_method
-  timeout_milliseconds = 29000
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.api_01.id
+  http_method             = aws_api_gateway_method.api_01_02.http_method
+  timeout_milliseconds    = 29000
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     =var.lambda_invoke_arn_01
-  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  uri                     = var.lambda_invoke_arn_01
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
 }
 
 resource "aws_api_gateway_method_response" "api_01_02" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.api_01.id
-  http_method = aws_api_gateway_method.api_01_02.http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.api.id
+  resource_id     = aws_api_gateway_resource.api_01.id
+  http_method     = aws_api_gateway_method.api_01_02.http_method
+  status_code     = "200"
   response_models = {"application/json"="Empty"}
 }
 
@@ -73,11 +97,13 @@ resource "aws_api_gateway_resource" "api_rsc_02" {
   path_part   = var.api_02
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#/{fastFileId}
 resource "aws_api_gateway_resource" "api_rsc_02_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_02.id
   path_part   = "{fastFileId}"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#/{fastFileId}/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_02_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -105,11 +131,13 @@ resource "aws_api_gateway_integration_response" "api_irspc_02_01" {
   http_method = aws_api_gateway_method.api_mthd_02_01.http_method
   status_code = aws_api_gateway_method_response.api_mrspc_02_01.status_code
 }
+#/{fastFileId}/buyer
 resource "aws_api_gateway_resource" "api_rsc_02_01_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_02_01.id
   path_part   = "buyer"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#/{fastFileId}/buyer/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_02_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -117,18 +145,18 @@ resource "aws_api_gateway_method" "api_mthd_02_01_01" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
 }
 resource "aws_api_gateway_integration" "api_int_02_01_01" {
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  resource_id          = aws_api_gateway_resource.api_rsc_02_01_01.id
-  http_method          = aws_api_gateway_method.api_mthd_02_01_01.http_method
-  timeout_milliseconds = 29000
-  type                    = "MOCK" #"AWS_PROXY"
-  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.api_rsc_02_01_01.id
+  http_method             = aws_api_gateway_method.api_mthd_02_01_01.http_method
+  timeout_milliseconds    = 29000
+  type                    = "MOCK"
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
 }
 resource "aws_api_gateway_method_response" "api_mrspc_02_01_01" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.api_rsc_02_01_01.id
-  http_method = aws_api_gateway_method.api_mthd_02_01_01.http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.api.id
+  resource_id     = aws_api_gateway_resource.api_rsc_02_01_01.id
+  http_method     = aws_api_gateway_method.api_mthd_02_01_01.http_method
+  status_code     = "200"
   response_models = {"application/json"="Empty"}
 }
 resource "aws_api_gateway_integration_response" "api_02_02" {
@@ -137,12 +165,13 @@ resource "aws_api_gateway_integration_response" "api_02_02" {
   http_method = aws_api_gateway_method.api_mthd_02_01_01.http_method
   status_code = aws_api_gateway_method_response.api_mrspc_02_01_01.status_code
 }
-
+#/{fastFileId}/buyer/{buyerid}
 resource "aws_api_gateway_resource" "api_rsc_02_01_01_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_02_01_01.id
   path_part   = "{buyerid}"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#/{fastFileId}/buyer/{buyerid}/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_02_01_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -150,11 +179,11 @@ resource "aws_api_gateway_method" "api_mthd_02_01_01_01" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
 }
 resource "aws_api_gateway_integration" "api_int_02_01_01_01" {
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  resource_id          = aws_api_gateway_resource.api_rsc_02_01_01_01.id
-  http_method          = aws_api_gateway_method.api_mthd_02_01_01_01.http_method
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.api_rsc_02_01_01_01.id
+  http_method             = aws_api_gateway_method.api_mthd_02_01_01_01.http_method
   type                    = "MOCK"
-  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
 }
 resource "aws_api_gateway_method_response" "api_mrspc_02_01_01_01" {
   rest_api_id = aws_api_gateway_rest_api.api.id
@@ -169,7 +198,7 @@ resource "aws_api_gateway_integration_response" "api_irspc_02_02_01" {
   http_method = aws_api_gateway_method.api_mthd_02_01_01_01.http_method
   status_code = aws_api_gateway_method_response.api_mrspc_02_01_01_01.status_code
 }
-
+#/{fastFileId}/buyer/{buyerid}/PUT
 resource "aws_api_gateway_method" "api_mthd_02_01_01_01_02" {
   authorization = "NONE"
   http_method   = "PUT"
@@ -177,14 +206,14 @@ resource "aws_api_gateway_method" "api_mthd_02_01_01_01_02" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
 }
 resource "aws_api_gateway_integration" "api_int_02_01_01_01_02" {
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  resource_id          = aws_api_gateway_resource.api_rsc_02_01_01_01.id
-  http_method          = aws_api_gateway_method.api_mthd_02_01_01_01_02.http_method
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.api_rsc_02_01_01_01.id
+  http_method             = aws_api_gateway_method.api_mthd_02_01_01_01_02.http_method
   type                    = "AWS_PROXY"
-  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
   integration_http_method = "POST"
-  uri                     =var.lambda_invoke_arn_02
-  timeout_milliseconds = 29000
+  uri                     = var.lambda_invoke_arn_02
+  timeout_milliseconds    = 29000
 
   content_handling        = "CONVERT_TO_TEXT"
   request_templates = {
@@ -326,8 +355,12 @@ resource "aws_api_gateway_integration" "api_int_03_01_01_01_02" {
   rest_api_id          = aws_api_gateway_rest_api.api.id
   resource_id          = aws_api_gateway_resource.api_rsc_03_01_01_01.id
   http_method          = aws_api_gateway_method.api_mthd_03_01_01_01_02.http_method
-  type                    = "MOCK"
+  type                    = "AWS_PROXY"
   passthrough_behavior = "WHEN_NO_TEMPLATES"
+  integration_http_method = "POST"
+  uri                     =var.lambda_invoke_arn_04
+  timeout_milliseconds = 29000
+
 }
 resource "aws_api_gateway_method_response" "api_mrspc_03_01_01_01_02" {
   rest_api_id = aws_api_gateway_rest_api.api.id
@@ -352,11 +385,13 @@ resource "aws_api_gateway_resource" "api_04" {
   path_part   = var.api_04
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#"/{fastFileId}"
 resource "aws_api_gateway_resource" "api_04_01" {
   parent_id   = aws_api_gateway_resource.api_04.id
   path_part   = "{fastFileId}"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#"/{fastFileId}/OPTIONS"
 resource "aws_api_gateway_method" "api_04_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -384,6 +419,38 @@ resource "aws_api_gateway_integration_response" "api_04_01" {
   http_method = aws_api_gateway_method.api_04_01.http_method
   status_code = aws_api_gateway_method_response.api_04_01.status_code
 }
+#/{fastFileId}/GET
+resource "aws_api_gateway_method" "api_04_01_02" {
+  authorization = "NONE"
+  http_method   = "GET"
+  resource_id   = aws_api_gateway_resource.api_04_01.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+}
+resource "aws_api_gateway_integration" "api_04_01_02" {
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  resource_id          = aws_api_gateway_resource.api_04_01.id
+  http_method          = aws_api_gateway_method.api_04_01_02.http_method
+  timeout_milliseconds = 29000
+  type                    = "AWS_PROXY"
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+
+  integration_http_method = "POST"
+  uri                     =var.lambda_invoke_arn_06
+}
+resource "aws_api_gateway_method_response" "api_04_01_02" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_04_01.id
+  http_method = aws_api_gateway_method.api_04_01_02.http_method
+  status_code = "200"
+  response_models = {"application/json"="Empty"}
+}
+resource "aws_api_gateway_integration_response" "api_04_01_02" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_04_01.id
+  http_method = aws_api_gateway_method.api_04_01_02.http_method
+  status_code = aws_api_gateway_method_response.api_04_01_02.status_code
+}
+
 
 
 #------------------------------------
@@ -789,11 +856,13 @@ resource "aws_api_gateway_integration_response" "api_08_02" {
   status_code = aws_api_gateway_method_response.api_mrspc_08_01_01.status_code
 }
 
+#{buyerid}
 resource "aws_api_gateway_resource" "api_rsc_08_01_01_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_08_01_01.id
   path_part   = "{buyerid}"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#{buyerid}/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_08_01_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -821,38 +890,13 @@ resource "aws_api_gateway_integration_response" "api_irspc_08_02_01" {
   status_code = aws_api_gateway_method_response.api_mrspc_08_01_01_01.status_code
 }
 
-resource "aws_api_gateway_method" "api_mthd_08_01_01_01_02" {
-  authorization = "NONE"
-  http_method   = "GET"
-  resource_id   = aws_api_gateway_resource.api_rsc_08_01_01_01.id
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-}
-resource "aws_api_gateway_integration" "api_int_08_01_01_01_02" {
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  resource_id          = aws_api_gateway_resource.api_rsc_08_01_01_01.id
-  http_method          = aws_api_gateway_method.api_mthd_08_01_01_01_02.http_method
-  type                    = "MOCK"
-  passthrough_behavior = "WHEN_NO_TEMPLATES"
-}
-resource "aws_api_gateway_method_response" "api_mrspc_08_01_01_01_02" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.api_rsc_08_01_01_01.id
-  http_method = aws_api_gateway_method.api_mthd_08_01_01_01_02.http_method
-  status_code = "200"
-  response_models = {"application/json"="Empty"}
-}
-resource "aws_api_gateway_integration_response" "api_irspc_08_01_01_01_02" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.api_rsc_08_01_01_01.id
-  http_method = aws_api_gateway_method.api_mthd_08_01_01_01_02.http_method
-  status_code = aws_api_gateway_method_response.api_mrspc_08_01_01_01_02.status_code
-}
-
+#contact
 resource "aws_api_gateway_resource" "api_rsc_08_01_01_01_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_08_01_01_01.id
   path_part   = "contact"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#contact/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_08_01_01_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -879,15 +923,13 @@ resource "aws_api_gateway_integration_response" "api_irspc_08_01_01_01_01" {
   http_method = aws_api_gateway_method.api_mthd_08_01_01_01_01.http_method
   status_code = aws_api_gateway_method_response.api_mrspc_08_01_01_01_01.status_code
 }
-
-
-
-
+#{contactId}
 resource "aws_api_gateway_resource" "api_rsc_08_01_01_01_01_01" {
   parent_id   = aws_api_gateway_resource.api_rsc_08_01_01_01_01.id
   path_part   = "{contactId}"
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
+#{contactId}/OPTIONS
 resource "aws_api_gateway_method" "api_mthd_08_01_01_01_01_01" {
   authorization = "NONE"
   http_method   = "OPTIONS"
@@ -915,26 +957,75 @@ resource "aws_api_gateway_integration_response" "api_irspc_08_01_01_01_01_01" {
   status_code = aws_api_gateway_method_response.api_mrspc_08_01_01_01_01_01.status_code
 }
 
+#{contactid}/Put
+resource "aws_api_gateway_method" "api_mthd_08_01_01_01_01_01_01" {
+  authorization = "NONE"
+  http_method   = "PUT"
+  resource_id   = aws_api_gateway_resource.api_rsc_08_01_01_01_01_01.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+}
+resource "aws_api_gateway_integration" "api_int_08_01_01_01_01_01_01" {
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  resource_id          = aws_api_gateway_resource.api_rsc_08_01_01_01_01_01.id
+  http_method          = aws_api_gateway_method.api_mthd_08_01_01_01_01_01_01.http_method
+  type                    = "AWS_PROXY"
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  integration_http_method = "POST"
+  uri                     =var.lambda_invoke_arn_02
+  timeout_milliseconds = 29000
+
+}
+resource "aws_api_gateway_method_response" "api_mrspc_08_01_01_01_01_01_01" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_rsc_08_01_01_01_01_01.id
+  http_method = aws_api_gateway_method.api_mthd_08_01_01_01_01_01_01.http_method
+  status_code = "200"
+  response_models = {"application/json"="Empty"}
+}
+resource "aws_api_gateway_integration_response" "api_irspc_08_01_01_01_01_01_01" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_rsc_08_01_01_01_01_01.id
+  http_method = aws_api_gateway_method.api_mthd_08_01_01_01_01_01_01.http_method
+  status_code = aws_api_gateway_method_response.api_mrspc_08_01_01_01_01_01_01.status_code
+}
+
+
 
 
 #------------------------------------
 #           API Deployment
 #------------------------------------
-# resource "aws_api_gateway_deployment" "api" {
+# resource "aws_api_gateway_deployment" "api_deployment_01" {
 #   depends_on = [aws_api_gateway_rest_api.api]
 #   rest_api_id   = aws_api_gateway_rest_api.api.id
 #   description   = "Deployed at ${timestamp()}"
-#   stage_name    = var.env
+#   stage_name    = var.stage_01_name
 #   stage_description = "Deployed at ${timestamp()}"
 # }
-# resource "aws_api_gateway_stage" "api" {
+# resource "aws_api_gateway_deployment" "api_deployment_02" {
+#   depends_on = [aws_api_gateway_rest_api.api]
+#   rest_api_id   = aws_api_gateway_rest_api.api.id
+#   description   = "Deployed at ${timestamp()}"
+#   stage_name    = var.stage_02_name
+#   stage_description = "Deployed at ${timestamp()}"
+# }
+# resource "aws_api_gateway_stage" "api_stage_01" {
 #   deployment_id = aws_api_gateway_deployment.api.id
 #   rest_api_id   = aws_api_gateway_rest_api.api.id
-#   stage_name    = var.env
+#   stage_name    = var.stage_01_name
 #   description   = "Deployed at ${timestamp()}"
 #   xray_tracing_enabled = var.enable_api_xray
 # }
-
+# resource "aws_api_gateway_stage" "api_stage_02" {
+#   deployment_id = aws_api_gateway_deployment.api.id
+#   rest_api_id   = aws_api_gateway_rest_api.api.id
+#   stage_name    = var.stage_02_name
+#   description   = "Deployed at ${timestamp()}"
+#   xray_tracing_enabled = var.enable_api_xray
+# }
+#------------------------------------
+#          Lambda permissions
+#------------------------------------
 
 resource "aws_lambda_permission" "api_01_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
@@ -944,13 +1035,6 @@ resource "aws_lambda_permission" "api_01_lambda" {
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_01_02.http_method}${aws_api_gateway_resource.api_01.path}"
 }
-resource "aws_lambda_permission" "api_05_lambda" {
-  statement_id  = "AllowExecutionFromAPIGateway5"
-  action        = "lambda:InvokeFunction"
-  function_name = var.lambda_name_05 #aws_lambda_function.lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_mthd_05_01_01_01_02.http_method}${aws_api_gateway_resource.api_rsc_05_01_01_01.path}"
-}
 resource "aws_lambda_permission" "api_02_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway2"
   action        = "lambda:InvokeFunction"
@@ -958,10 +1042,38 @@ resource "aws_lambda_permission" "api_02_lambda" {
   principal     = "apigateway.amazonaws.com"
   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_mthd_02_01_01_01_02.http_method}${aws_api_gateway_resource.api_rsc_02_01_01_01.path}"
 }
+resource "aws_lambda_permission" "api_03_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway3"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_name_04 #aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_mthd_03_01_01_01_02.http_method}${aws_api_gateway_resource.api_rsc_03_01_01_01.path}"
+}
+resource "aws_lambda_permission" "api_04_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway4"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_name_06 #aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_04_01.http_method}${aws_api_gateway_resource.api_04_01.path}"
+}
+resource "aws_lambda_permission" "api_05_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway5"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_name_05 #aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_mthd_05_01_01_01_02.http_method}${aws_api_gateway_resource.api_rsc_05_01_01_01.path}"
+}
 resource "aws_lambda_permission" "api_07_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway7"
   action        = "lambda:InvokeFunction"
   function_name = var.lambda_name_03
   principal     = "apigateway.amazonaws.com"
   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_07_02.http_method}${aws_api_gateway_resource.api_07.path}"
+}
+resource "aws_lambda_permission" "api_08_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway8"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_name_02
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.api_mthd_08_01_01_01_01_01_01.http_method}${aws_api_gateway_resource.api_rsc_08_01_01_01_01_01.path}"
 }

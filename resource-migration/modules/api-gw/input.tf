@@ -108,13 +108,3 @@ variable "lambda_name_06"{
     default = ""
     description = "Lambda 01 name "
 }
-variable "lambda_invoke_arn_07"{
-    type = string
-    default = ""
-    description = "Lambda 07 invoke arn "
-}
-variable "lambda_name_07"{
-    type = string
-    default = ""
-    description = "Lambda 01 name "
-}
