@@ -16,6 +16,14 @@ variable "region"{
     type = string
     description = "AWS region"
 }
+variable "stage_01_name"{
+    type = string
+    description = "API stage 01 name"
+}
+variable "stage_02_name"{
+    type = string
+    description = "API stage 02 name"
+}
 variable "api_01" {
     type = string
     description = "api name 01"
@@ -52,6 +60,10 @@ variable "enable_api_xray"{
     type = string
     default = true
     description = "Enable xray for api gateway"
+}
+variable "authorizer_lambda_invoke_arn"{
+    type = string
+    description = "Authorizer lambda invoke arn"
 }
 variable "lambda_invoke_arn_01"{
     type = string
@@ -107,4 +119,8 @@ variable "lambda_name_06"{
     type = string
     default = ""
     description = "Lambda 01 name "
+}
+variable "tags"{
+    type = map(string)
+    description = "Tags for resources"
 }
