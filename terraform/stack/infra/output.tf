@@ -55,3 +55,30 @@
 # output "lambda_updatesigningorder" {
 #     value = module.lambda_updatesigningorder.lambda_function_arn
 # }
+output "api_deployment_01" {
+    value = module.api_gw.api_deployment_01
+}
+output "api_deployment_02" {
+    value = module.api_gw.api_deployment_02
+}
+output "dynamodb" {
+    value = module.dynamodb.dynamodb
+}
+output "api_lambda_function_01"{
+    value = module.api_lambda_function_01.lambda_function_arn
+}
+output "api_lambda_function_02"{
+    value = module.api_lambda_function_02.lambda_function_arn
+}
+output "api_lambda_function_03"{
+    value = module.api_lambda_function_03.lambda_function_arn
+}
+output "api_lambda_function_04"{
+    value = module.api_lambda_function_04.lambda_function_arn
+}
+output "api_lambda_function_05"{
+    value = module.api_lambda_function_05.lambda_function_arn
+}
+output "api_lambda_function_06"{
+    value = module.api_lambda_function_06.lambda_function_arn
+}
