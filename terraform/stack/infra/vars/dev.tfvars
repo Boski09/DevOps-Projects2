@@ -3,6 +3,9 @@ project = "ddms"
 #### S3 bucket var-values ####
 s3_versioning = true
 
+### Lamda layer var-values ####
+lambda_layer_01_deployment_pkg_path =  "../../modules/lambda/lambda_function.zip"
+
 #### Lambda function var-values ####
 vpc_id                  = "vpc-d53b0ead"
 lambda_subnet_ids       = ["subnet-0b76e756", "subnet-a03494ea"]

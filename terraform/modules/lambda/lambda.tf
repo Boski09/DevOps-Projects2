@@ -90,17 +90,20 @@ resource "aws_iam_role_policy_attachment" "lambda_role_policy" {
 }
 
 resource "aws_lambda_function" "lambda_function" {
-  depends_on       = [aws_iam_role.lambda_function_role]
-  function_name    = var.lambda_function_name
-  runtime          = var.lambda_function_runtime
-  handler          = var.lambda_handler_name
-  role             = aws_iam_role.lambda_function_role.arn
-  memory_size      = var.lambda_max_memory
-  timeout          = var.lambda_timeout
-  filename         = var.lambda_deployment_package_path  #"lambda_function_payload.zip"
-  source_code_hash = filebase64sha256(var.lambda_deployment_package_path)
+  depends_on                     = [aws_iam_role.lambda_function_role]
+  function_name                  = var.lambda_function_name
+  runtime                        = var.lambda_function_runtime
+  handler                        = var.lambda_handler_name
+  role                           = aws_iam_role.lambda_function_role.arn
+  memory_size                    = var.lambda_max_memory
+  timeout                        = var.lambda_timeout
+  filename                       = var.lambda_deployment_package_path  #"lambda_function_payload.zip"
+  source_code_hash               = filebase64sha256(var.lambda_deployment_package_path)
+  reserved_concurrent_executions = var.lambda_reserved_concurrency
+  layers                         = var.lambda_layer != "" ? [var.lambda_layer] : null
 
-  tags             = var.tags
+  tags             = var.tags 
+  publish          = var.publish_lambda
   vpc_config {
     security_group_ids = [aws_security_group.lambda_function_sg.id]
     subnet_ids         = var.subnet_ids
@@ -114,4 +117,12 @@ resource "aws_lambda_function" "lambda_function" {
     }
   }
   
+}
+resource "aws_lambda_alias" "lambda_alias" {
+  depends_on       = [aws_lambda_function.lambda_function]
+  count            = var.lambda_version != "" ? 1 : 0
+  name             = var.lambda_alias_name
+  description      = var.lambda_alias_name
+  function_name    = var.lambda_function_name
+  function_version = var.lambda_version
 }

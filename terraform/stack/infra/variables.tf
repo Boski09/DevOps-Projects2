@@ -34,6 +34,11 @@ variable "lambda_timeout" {
 
 ########Per Lambda vars #######
 
+variable "lambda_layer_01_deployment_pkg_path"{
+  type = string
+  description = "(Empty if not required) Lambda function layer code zip local path"
+}
+
 variable "getlookupdata_lambda_handler_name" {
   type = string
   description = "Lambda function handler name"

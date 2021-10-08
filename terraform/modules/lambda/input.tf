@@ -54,7 +54,33 @@ variable "lambda_env_variables" {
   description = "(Optional) A map of environment variables to pass to the Lambda function."
 
 }
+variable "lambda_layer"{
+  type = string
+  default = ""
+  description = "(Empty if not required) Layer arn for lambda function"
+}
+variable "lambda_version"{
+  type = string
+  default = ""
+  description = "(Empty if not required) Lambda function version"
+}
+variable "lambda_alias_name"{
+  type = string
+  default = ""
+  description = "(Empty if not required) Lambda function alias name"
+}
+variable "publish_lambda"{
+  type = bool
+  default = false
+  description = "true to publish lambda false otherwise"
+}
+variable "lambda_reserved_concurrency"{
+  type = number
+  default = 20
+  description = "Max reserved concurrency limit for lambda function"
+}
 variable "tags" {
   type = map(string)
   description = "Tags to attach to resources"
 }
+
